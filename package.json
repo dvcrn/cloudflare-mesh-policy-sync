@@ -1,0 +1,10 @@
+{
+  "name": "cloudflare-mesh-dns-sync",
+  "private": true,
+  "scripts": {
+    "build": "mise x go -- go run github.com/syumai/workers-go/cmd/workers-assets-gen -mode=go && GOOS=js GOARCH=wasm mise x go -- go build -trimpath -ldflags='-s -w' -o build/app.wasm ./cmd/sync"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.3"
+  }
+}

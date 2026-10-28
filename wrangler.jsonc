@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cloudflare-mesh-dns-sync",
+  "account_id": "02c07a2514d9a25f58c78a180bb8c6f3",
+  "main": "build/worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "build": { "command": "bun run build", "watch_dir": ["cmd", "internal"] },
+  "triggers": { "crons": ["*/5 * * * *"] },
+  "vars": {
+    "CLOUDFLARE_ACCOUNT_ID": "02c07a2514d9a25f58c78a180bb8c6f3",
+    "DOMAIN": "mesh.d.pn",
+    "ALLOWED_IDENTITIES": "warp_connector@davicorn.cloudflareaccess.com",
+    "STALE_AFTER": "168h"
+  },
+  "observability": { "enabled": true, "head_sampling_rate": 1 }
+}

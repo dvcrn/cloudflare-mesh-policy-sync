@@ -1,0 +1,5 @@
+[providers.1password]
+type = "1password"
+
+[secrets]
+CLOUDFLARE_API_TOKEN = { provider = "1password", value = "op://cloud-dev/cloudflare-mesh-dns-sync/CLOUDFLARE_API_TOKEN" }

@@ -1,0 +1,38 @@
+[tools]
+go = "1.26.4"
+bun = "latest"
+
+[env]
+CLOUDFLARE_ACCOUNT_ID = "02c07a2514d9a25f58c78a180bb8c6f3"
+DOMAIN = "mesh.d.pn"
+ALLOWED_IDENTITIES = "warp_connector@davicorn.cloudflareaccess.com"
+
+[tasks.test]
+run = "go test -race ./..."
+
+[tasks.lint]
+run = ["go vet ./...", "GOOS=js GOARCH=wasm go vet ./..."]
+
+[tasks.check]
+run = "test -z \"$(gofmt -l cmd internal)\""
+
+[tasks.build]
+run = "bun run build"
+
+[tasks.sync]
+description = "Run one sync locally; pass -n for a dry run"
+run = "fnox exec -- go run ./cmd/sync"
+
+[tasks.secrets]
+description = "Upload secrets from fnox to the Worker"
+run = """
+for k in CLOUDFLARE_API_TOKEN; do
+  fnox get "$k" | bunx --no-install wrangler secret put "$k"
+done
+"""
+
+[tasks.deploy]
+run = "bunx --no-install wrangler deploy"
+
+[tasks.tail]
+run = "bunx --no-install wrangler tail"
