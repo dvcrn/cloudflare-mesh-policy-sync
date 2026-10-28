@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -121,14 +122,17 @@ func (c *Client) DeleteRule(ctx context.Context, id string) error {
 }
 
 func (c *Client) do(ctx context.Context, method, path string, body any, out any) error {
-	var buf []byte
+	// A nil reader, not an empty one: Workers' fetch rejects GET requests with any body,
+	// and net/http turns an empty reader into the non-nil http.NoBody.
+	var r io.Reader
 	if body != nil {
-		var err error
-		if buf, err = json.Marshal(body); err != nil {
+		buf, err := json.Marshal(body)
+		if err != nil {
 			return err
 		}
+		r = bytes.NewReader(buf)
 	}
-	req, err := http.NewRequestWithContext(ctx, method, apiBase+"/accounts/"+url.PathEscape(c.AccountID)+path, bytes.NewReader(buf))
+	req, err := http.NewRequestWithContext(ctx, method, apiBase+"/accounts/"+url.PathEscape(c.AccountID)+path, r)
 	if err != nil {
 		return err
 	}
